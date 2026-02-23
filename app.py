@@ -17,6 +17,8 @@ class Thermosafe:
      def updateClock(self):
           clock = time.strftime("%H:%M")
 
+print ("Current time: " + Thermosafe.clock)
+
 class DeepFreeze:
      food_types = {
           "Liquid":["Water", "Juice", "Ice Cream", "Popsicles"],
@@ -42,4 +44,5 @@ class Timed_Freeze:
                  self.time_left -= 1
             else:
                  print("Time's up! Food reached desired temperature.")
+
 

@@ -19,9 +19,10 @@ class Thermosafe:
 
 class DeepFreeze:
      food_types = {
+          "Liquid":["Water", "Juice", "Ice Cream", "Popsicles"],
           "Meat":["Chicken","Pork","Hamburger","Steak"],
           "Vegetables":["Potatoes","Strawberries","Corn",
-                        "Green Beans","Lettuce","Blueberries"]}
+                        "Green Beans","Lettuce","Blueberries"],}
 
      def flashFreeze(self, item, time, temp):
           self.item = item
@@ -41,3 +42,4 @@ class Timed_Freeze:
                  self.time_left -= 1
             else:
                  print("Time's up! Food reached desired temperature.")
+

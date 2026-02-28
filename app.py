@@ -9,15 +9,23 @@ import time
 import tkinter as tk
 from tkinter import PhotoImage
 
-#new code*************************
 class Thermosafe:
      temperature = 0
-     clock = time.strftime("%H:%M")
+     clock = time.strftime("%H:%M %p")
 
      def updateClock(self):
-          clock = time.strftime("%H:%M")
+          self.clock = time.strftime("%H:%M %p")
 
 print ("Current time: " + Thermosafe.clock)
+
+setting = input("Choose a setting (1-3): \n1. Cool Down \n2. Deep Freeze \n3. Timed Freeze \n")
+
+class Cool_Down:
+     food_types = {
+          "Liquid":["Water", "Juice", "Ice Cream", "Popsicles"],
+          "Meat":["Chicken","Pork","Hamburger","Steak"],
+          "Vegetables":["Potatoes","Strawberries","Corn",
+                        "Green Beans","Lettuce","Blueberries"],}
 
 class DeepFreeze:
      food_types = {
@@ -45,4 +53,9 @@ class Timed_Freeze:
             else:
                  print("Time's up! Food reached desired temperature.")
 
-
+if setting == "1":
+     Cool_Down()
+elif setting == "2":
+     DeepFreeze()
+elif setting == "3":
+     Timed_Freeze()

@@ -24,8 +24,6 @@ class Thermosafe:
 current_time = Thermosafe.clock
 print ("Current time: " + current_time)
 
-setting = input("Choose a setting (1-3): \n1. Cool Down \n2. Deep Freeze \n3. Timed Freeze \n")
-
 class Cool_Down:
      food_types = {
           "Liquid":["Water", "Juice", "Ice Cream", "Popsicles"],
@@ -45,26 +43,26 @@ class DeepFreeze:
           self.item = item
           self.time = time
           self.temp = temp
-     
+
+setting = input("Choose a setting (1-3): \n1. Cool Down \n2. Deep Freeze \n3. Timed Freeze \n4. Cancel \n")
+
 #user input "enter time" counts down
 class Timed_Freeze:
-     time = 0
-     time_left = 0
-
-     def activate(self, time):
-          self.time = time
-          self.time_left = time
+     def __init__(self):
+          self.time = int(input("Enter the desired cooling time (in seconds): "))
+          self.time_left = self.time
           
-     def update(self):
-            if self.time_left > 0:
-                 self.time_left -= 1
-            else:
-                 print("Time's up! Food reached desired temperature.")
+          while self.time_left != 0:
+               self.time_left -= 1
+               print(f"Time left: {self.time_left} seconds")
+          if self.time_left == 0:
+               print("Time's up! Food reached desired temperature.")
+          else:
+               print ("Current time: " + Thermosafe.clock)
 
 #define functions for buttons
 def flashFreezeMain():
      DeepFreeze.flashFreeze()
-
 
 if setting == "1":
      Cool_Down()
@@ -72,6 +70,8 @@ elif setting == "2":
      DeepFreeze()
 elif setting == "3":
      Timed_Freeze()
+else:
+     print ("Current time: " + Thermosafe.clock)
 
 
 #main window-----------------------------------------------------
@@ -102,3 +102,4 @@ add_FlashFreeze_btn = tk.Button(window, text='Flash Freeze', fg="white", bg="med
 footnote = tk.Label(window, text = "Code by the Syntax Savvy Duo", width=300, fg="darkorchid4", bg="white").pack(expand = True)
 #run---------------------------------------------------------------
 window.mainloop()
+

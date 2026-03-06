@@ -8,21 +8,23 @@ Short Desc:     class definition of the Thermosafe system
 import time
 import tkinter as tk
 from tkinter import PhotoImage
+from tkinter import messagebox
+from tkinter import simpledialog
 import os
+import tkinter
 
 #picture file path will be the same folder as the code
 script_dir = os.path.dirname(os.path.abspath(__file__))
 img_path = os.path.join(script_dir, "freezer.png")
 
 class Thermosafe:
-     temperature = 0
-     clock = time.strftime("%H:%M %p")
+     def __init__(self):
+          self.temperature = 0
+          self.clock = time.strftime("%I:%M:%S %p")
 
      def updateClock(self):
-          self.clock = time.strftime("%H:%M %p")
+          self.clock = time.strftime("%I:%M:%S %p")
 
-current_time = Thermosafe.clock
-print ("Current time: " + current_time)
 
 class Cool_Down:
      food_types = {
@@ -44,62 +46,69 @@ class DeepFreeze:
           self.time = time
           self.temp = temp
 
-setting = input("Choose a setting (1-3): \n1. Cool Down \n2. Deep Freeze \n3. Timed Freeze \n4. Cancel \n")
-
 #user input "enter time" counts down
-class Timed_Freeze:
-     def __init__(self):
-          self.time = int(input("Enter the desired cooling time (in seconds): "))
-          self.time_left = self.time
-          
-          while self.time_left != 0:
-               self.time_left -= 1
-               print(f"Time left: {self.time_left} seconds")
-          if self.time_left == 0:
-               print("Time's up! Food reached desired temperature.")
-          else:
-               print ("Current time: " + Thermosafe.clock)
+class Timed_Freeze():
+    def __init__(self, seconds):
+        self.seconds = seconds
+     #this function sets the timer off                   
+    def go(self):
+        print(time.ctime())
+        while self.seconds > 0:
+            time.sleep(1)
+            print(self.seconds)
+            self.seconds -= 1
+        print(time.ctime())
 
-#define functions for buttons
-def flashFreezeMain():
+#Create class instances for main window
+thermo = Thermosafe()
+current_time_str = "Current Time: " + thermo.clock + "\n"
+
+#define functions for buttons---------------------------------
+     #user enters food type
+def deepFreezeFlash():
      DeepFreeze.flashFreeze()
-
-if setting == "1":
-     Cool_Down()
-elif setting == "2":
-     DeepFreeze()
-elif setting == "3":
-     Timed_Freeze()
-else:
-     print ("Current time: " + Thermosafe.clock)
+     #User will enter how many seconds and then clock will update
+def timedFreeze():
+     secs = tkinter.simpledialog.askinteger("Q", "How many seconds?")
+     if secs is not None:
+          timer1 = Timed_Freeze(secs)
+          timer1.go()
+          messagebox.showinfo("End", "Time's up!.")
+     thermo1 = Thermosafe()
+     thermo1.updateClock()
+     new_clock_str = "Current Time: " + thermo1.clock + "\n"
+     clock_var.set(new_clock_str)
 
 
 #main window-----------------------------------------------------
 window = tk.Tk()
-window.geometry('500x300')
+window.geometry('280x400')
 window.title('Thermosafe Freezer')
-window.configure(bg="white")
+window.configure(bg="gray94")
 
 #add image-------------------------------------------------------
 img = PhotoImage(file=img_path).subsample(3, 3)
 img_lbl  = tk.Label(window, image = img, borderwidth = 0).pack()
 
-#arrange widgets--------------------------------------------------
-setting_lbl_var = tk.StringVar()
-setting_lbl_var.set("Setting: " + str(setting))
-setting_lbl = tk.Label(window, 
-                       textvariable = setting_lbl_var, 
-                       width=30, fg="aqua", bg="black").pack()
-clock_lbl_var = tk.StringVar()
-clock_lbl_var.set("Current Time: " + str(current_time))
+#arrange widget text box-----------------------------------------
+clock_var = tk.StringVar(value=current_time_str)
 clock_lbl = tk.Label(window, 
-                       textvariable = clock_lbl_var, 
-                       width=30, fg="aqua", bg="black").pack()
-#buttons---------------------------------------------------------
-add_FlashFreeze_btn = tk.Button(window, text='Flash Freeze', fg="white", bg="mediumpurple4", width=12,
-                          command = flashFreezeMain).pack()
+                       textvariable = clock_var, 
+                       width=30, fg="darkorchid4")
+clock_lbl.pack()
 
-footnote = tk.Label(window, text = "Code by the Syntax Savvy Duo", width=300, fg="darkorchid4", bg="white").pack(expand = True)
+#buttons---------------------------------------------------------
+#Deep Freeze
+add_FlashFreeze_btn = tk.Button(window, text='Deep Freeze', fg="white", bg="mediumpurple4", width=12,
+                          command = deepFreezeFlash).pack()
+#Cool Down 
+add_FlashFreeze_btn = tk.Button(window, text='Cool Down', fg="white", bg="mediumpurple4", width=12).pack()
+#Timed Freeze
+add_FlashFreeze_btn = tk.Button(window, text='Timed Freeze', fg="white", bg="mediumpurple4", width=12, command = timedFreeze).pack()
+
+#text footnote-----------------------------------------------------
+footnote = tk.Label(window, text = "Code by the Syntax Savvy Duo", width=300, fg="darkorchid4", bg="gray94").pack(expand = True)
+
 #run---------------------------------------------------------------
 window.mainloop()
 

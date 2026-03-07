@@ -8,98 +8,155 @@ Short Desc:     class definition of the Thermosafe system
 import time
 import tkinter as tk
 from tkinter import PhotoImage
+from tkinter import messagebox
+from tkinter import simpledialog
 import os
-
+import tkinter
 #picture file path will be the same folder as the code
 script_dir = os.path.dirname(os.path.abspath(__file__))
 img_path = os.path.join(script_dir, "freezer.png")
 
+#This class' object will be used in the tkinter window
 class Thermosafe:
-     temperature = 0
-     clock = time.strftime("%H:%M %p")
+     def __init__(self):
+          self.temperature = 0
+          self.clock = time.strftime("%I:%M:%S %p")
 
      def updateClock(self):
-          self.clock = time.strftime("%H:%M %p")
-
-current_time = Thermosafe.clock
-print ("Current time: " + current_time)
-
-class Cool_Down:
-     food_types = {
-          "Liquid":["Water", "Juice", "Ice Cream", "Popsicles"],
-          "Meat":["Chicken","Pork","Hamburger","Steak"],
-          "Vegetables":["Potatoes","Strawberries","Corn",
-                        "Green Beans","Lettuce","Blueberries"],}
-
-#ex: Strawberries = 2 minutes
-class DeepFreeze:
-     food_types = {
-          "Liquid":["Water", "Juice", "Ice Cream", "Popsicles"],
-          "Meat":["Chicken","Pork","Hamburger","Steak"],
-          "Vegetables":["Potatoes","Strawberries","Corn",
-                        "Green Beans","Lettuce","Blueberries"],}
-
-     def flashFreeze(self, item, time, temp):
-          self.item = item
-          self.time = time
-          self.temp = temp
-
-setting = input("Choose a setting (1-3): \n1. Cool Down \n2. Deep Freeze \n3. Timed Freeze \n4. Cancel \n")
+          self.clock = time.strftime("%I:%M:%S %p")
 
 #user input "enter time" counts down
 class Timed_Freeze:
-     def __init__(self):
-          self.time = int(input("Enter the desired cooling time (in seconds): "))
-          self.time_left = self.time
+    def __init__(self, seconds):
+        self.seconds = seconds
+     #this function sets the timer off                   
+    def go(self):
+        print(time.strftime("%I:%M:%S %p")+" - Timer started")
+        while self.seconds > 0:
+            time.sleep(1)
+            print(self.seconds)
+            self.seconds -= 1
+        print(time.strftime("%I:%M:%S %p")+" - Timer ended")
+
+#user input "enter food type" and "enter weight" counts down to cool dish
+class Cool_Down:
+     food_types = [
+          ["Liquid","Meat","Vegetables"],
+          [60,120,90],   #under 5
+          [120,180,120]] #over 5lbs
+
+     def __init__(self, food, weight):
+          self.food = food
+          self.weight = weight
+          self.time_left = 0
           
-          while self.time_left != 0:
-               self.time_left -= 1
-               print(f"Time left: {self.time_left} seconds")
-          if self.time_left == 0:
-               print("Time's up! Food reached desired temperature.")
+          #find the index of the food type, time left depends on if weight is more or less than 5 lbs
+          f_indx = self.food_types[0].index(food)
+          w_indx = 1 if weight <= 5 else 2
+
+          #set time left by finding in arry
+          self.time_left = self.food_types[w_indx][f_indx]
+
+          #print("Food: "+food_types[0][f_indx]+"\nWeight: "+str(weight)+"\nTime: "+str(food_types[w_indx][f_indx]))
+          self.coolString = "Food: "+self.food_types[0][f_indx]+"\nWeight: "+str(weight)+"\nTime: "+str(self.food_types[w_indx][f_indx])+" seconds"
+
+
+#user input "enter catgory", enter item", "enter days" counts down to flash freeze for a number of days depending on category and item
+class Deep_Freeze:
+     liquid = {
+          1: "Water", 
+          2: "Popsicles", 
+          3: "Ice Cream"}
+     meat = {
+          1: "Beef", 
+          2: "Chicken", 
+          3: "Pork"}
+     vegetables = {
+          1: "Greens", 
+          2: "Carrots", 
+          3: "Corn"}
+     
+     def __init__(self, category, item, num_days):
+          self.category = category
+          self.item = item
+          self.num_days = num_days
+
+          if category == "liquid":
+               print("Liquid item chosen: "+self.liquid[item]+"\nDays frozen: "+num_days)
+          elif category == "meat":
+               print("Meat item chosen: "+self.meat[item]+"\nDays frozen: "+num_days)
           else:
-               print ("Current time: " + Thermosafe.clock)
+               print("Vegetable item chosen: "+self.vegetables[item]+"\nDays frozen: "+num_days)
+     #def begin():
 
-#define functions for buttons
-def flashFreezeMain():
-     DeepFreeze.flashFreeze()
 
-if setting == "1":
-     Cool_Down()
-elif setting == "2":
-     DeepFreeze()
-elif setting == "3":
-     Timed_Freeze()
-else:
-     print ("Current time: " + Thermosafe.clock)
+#Create Thermosafe class instances for main window
+thermo = Thermosafe()
+current_time_str = "Current Time: " + thermo.clock + "\n"
+
+#define functions for buttons---------------------------------
+def timedFreeze():
+#User will enter how many seconds and then clock will update
+     secs = tkinter.simpledialog.askinteger("Q", "How many seconds?")
+     if secs is not None:
+          timer1 = Timed_Freeze(secs)
+          timer1.go()
+          messagebox.showinfo("End", "Time's up!")
+     thermo1 = Thermosafe()
+     thermo1.updateClock()
+     new_clock_str = "Current Time: " + thermo1.clock + "\n"
+     clock_var.set(new_clock_str)
+def deepFreeze():
+#user will be prompted for liquid, meat, or veg. will select item 1-3, and days frozen
+     optionsTuple = (1,2,3)
+     cat = tkinter.simpledialog.askstring("Q", "TYPE a category of food to flash freeze: \nLiquid \nMeat \nVegetables").lower()
+     #different options in the prompt depending on what category chosen/typed
+     if cat == "liquid":
+          itm = tkinter.simpledialog.askinteger("Q", "Choose an item "+str(optionsTuple)+" to flash freeze: \n1. Water \n2. Popsicles \n3. Ice Cream")
+     elif cat == "meat":
+          itm = tkinter.simpledialog.askinteger("Q", "Choose an item "+str(optionsTuple)+" to flash freeze: \n1. Beef \n2. Chicken \n3. Pork")
+     else: #"vegetables"
+          itm = tkinter.simpledialog.askinteger("Q", "Choose an item "+str(optionsTuple)+" to flash freeze: \n1. Greens \n2. Carrots \n3. Corn")
+     
+     days = tkinter.simpledialog.askstring("Q", "Enter the number of days you\nwant to flash freeze the item for: ")
+     #create class instance
+     deep1 = Deep_Freeze(cat,itm,days)
+     if cat == "liquid":
+          messagebox.showinfo("End", "Time's up!\n"+ deep1.liquid[itm]+" was frozen for "+days+" days!")
+     elif cat == "meat":
+          messagebox.showinfo("End", "Time's up!\n"+ deep1.meat[itm]+" was frozen for "+days+" days!")
+     else:
+          messagebox.showinfo("End", "Time's up!\n"+ deep1.vegetables[itm]+" was frozen for "+days+" days!")
+def coolDown():
+     userFood = tkinter.simpledialog.askstring("Q", "TYPE a category of food to cool down: \nLiquid \nMeat \nVegetables").capitalize()
+     userWeight = tkinter.simpledialog.askinteger("Q", "Enter the approximate weight of the food as a whole number (in pounds): ")
+     #create class instance
+     cool1 = Cool_Down(userFood,userWeight)
+     messagebox.showinfo("End","Time's up! Food reached desired temperature.\n"+cool1.coolString)
 
 
 #main window-----------------------------------------------------
 window = tk.Tk()
-window.geometry('500x300')
+window.geometry('280x400')
 window.title('Thermosafe Freezer')
-window.configure(bg="white")
+window.configure(bg="gray94")
 
 #add image-------------------------------------------------------
 img = PhotoImage(file=img_path).subsample(3, 3)
 img_lbl  = tk.Label(window, image = img, borderwidth = 0).pack()
 
-#arrange widgets--------------------------------------------------
-setting_lbl_var = tk.StringVar()
-setting_lbl_var.set("Setting: " + str(setting))
-setting_lbl = tk.Label(window, 
-                       textvariable = setting_lbl_var, 
-                       width=30, fg="aqua", bg="black").pack()
-clock_lbl_var = tk.StringVar()
-clock_lbl_var.set("Current Time: " + str(current_time))
-clock_lbl = tk.Label(window, 
-                       textvariable = clock_lbl_var, 
-                       width=30, fg="aqua", bg="black").pack()
-#buttons---------------------------------------------------------
-add_FlashFreeze_btn = tk.Button(window, text='Flash Freeze', fg="white", bg="mediumpurple4", width=12,
-                          command = flashFreezeMain).pack()
+#arrange widget text box-----------------------------------------
+clock_var = tk.StringVar(value=current_time_str)
+clock_lbl = tk.Label(window, textvariable = clock_var, width=30, fg="darkorchid4").pack()
 
-footnote = tk.Label(window, text = "Code by the Syntax Savvy Duo", width=300, fg="darkorchid4", bg="white").pack(expand = True)
+#buttons---------------------------------------------------------
+timeFreeze_btn = tk.Button(window, text='Timed Freeze', fg="white", bg="mediumpurple4", width=12, command = timedFreeze).pack()
+deepFreeze_btn = tk.Button(window, text='Deep Freeze', fg="white", bg="mediumpurple4", width=12, command = deepFreeze).pack()
+coolDown_btn = tk.Button(window, text='Cool Down', fg="white", bg="mediumpurple4", width=12, command = coolDown).pack()
+
+#text footnote-----------------------------------------------------
+footnote = tk.Label(window, text = "Code by the Syntax Savvy Duo", width=300, fg="darkorchid4", bg="gray94").pack(expand = True)
+
 #run---------------------------------------------------------------
 window.mainloop()
 

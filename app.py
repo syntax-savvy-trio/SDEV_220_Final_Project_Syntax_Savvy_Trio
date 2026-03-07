@@ -57,8 +57,8 @@ class Cool_Down:
           #set time left by finding in arry
           self.time_left = self.food_types[w_indx][f_indx]
 
-          #print("Food: "+food_types[0][f_indx]+"\nWeight: "+str(weight)+"\nTime: "+str(food_types[w_indx][f_indx]))
-          self.coolString = "Food: "+self.food_types[0][f_indx]+"\nWeight: "+str(weight)+"\nTime: "+str(self.food_types[w_indx][f_indx])+" seconds"
+          print(self.food_types[0][f_indx]+" | Weight: "+str(weight)+" | Time: "+str(self.food_types[w_indx][f_indx]))
+          self.coolString = "Food: "+self.food_types[0][f_indx]+"\nWeight: "+str(weight)+"\nTime: "+str(self.time_left)+" seconds"
 
 
 #user input "enter catgory", enter item", "enter days" counts down to flash freeze for a number of days depending on category and item
@@ -122,11 +122,11 @@ def deepFreeze():
      #create class instance
      deep1 = Deep_Freeze(cat,itm,days)
      if cat == "liquid":
-          messagebox.showinfo("End", "Time's up!\n"+ deep1.liquid[itm]+" was frozen for "+days+" days!")
+          messagebox.showinfo("End", "Time's up!\n"+ deep1.liquid[itm]+" frozen for "+days+" days!")
      elif cat == "meat":
-          messagebox.showinfo("End", "Time's up!\n"+ deep1.meat[itm]+" was frozen for "+days+" days!")
+          messagebox.showinfo("End", "Time's up!\n"+ deep1.meat[itm]+" frozen for "+days+" days!")
      else:
-          messagebox.showinfo("End", "Time's up!\n"+ deep1.vegetables[itm]+" was frozen for "+days+" days!")
+          messagebox.showinfo("End", "Time's up!\n"+ deep1.vegetables[itm]+" frozen for "+days+" days!")
 def coolDown():
      userFood = tkinter.simpledialog.askstring("Q", "TYPE a category of food to cool down: \nLiquid \nMeat \nVegetables").capitalize()
      userWeight = tkinter.simpledialog.askinteger("Q", "Enter the approximate weight of the food as a whole number (in pounds): ")
